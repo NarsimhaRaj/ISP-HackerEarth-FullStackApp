@@ -9,8 +9,8 @@ class Dashboard extends Component {
         super(props);
         this.state = {
             ispList: [],
-            ispListFilter:[],
-            selectedISP:{},
+            ispListFilter: [],
+            selectedISP: {},
             error: ""
         }
         this.onChange = this.onChange.bind(this);
@@ -24,30 +24,35 @@ class Dashboard extends Component {
     componentWillUnmount() {
         store.removeChangeListener(this.onChange.bind(this));
     }
-    onChange = ()=> {
+    onChange = () => {
         var list = store.getISPList();
-        setTimeout(()=>{
+        setTimeout(() => {
             this.setState({
-                ispList:list,
-                ispListFilter:list
+                ispList: list,
+                ispListFilter: list,
+                selectedISP: list[0]
             });
-        this.sortData("rating");
-    },1000)
-        
+            this.props.setIspDetails(list);
+            this.sortData("rating");
+        }, 1000)
+
     }
     inputHandler(value) {
         let { ispList } = this.state;
+        console.log(value);
         this.setState({
-            ispListFilter: ispList.filter(data => (data.name.toString().toLowerCase().indexOf(value) !== -1) || 
-            (data.lowest_price.toString().indexOf(value) !== -1)
-            || (data.rating.toString().indexOf(value) !== -1))            
+            ispListFilter: ispList.filter((data) => {
+                return data.name.toString().toLowerCase().indexOf(value) !== -1 ||
+                    data.lowest_price.toString().indexOf(value) !== -1
+                    || data.rating.toString().indexOf(value) !== -1
+            })
         });
     }
     sortData(val) {
         let { ispList, ispListFilter } = this.state;
         if (val === 'rating') {
-            ispList.sort((b, a) => (b.rating > a.rating) ? 1 : ((a.rating > b.rating) ? -1 : 0));
-            ispListFilter.sort((b, a) => (b.rating > a.rating) ? 1 : ((a.rating > b.rating) ? -1 : 0));
+            ispList.sort((a, b) => (b.rating > a.rating) ? 1 : ((a.rating > b.rating) ? -1 : 0));
+            ispListFilter.sort((a, b) => (b.rating > a.rating) ? 1 : ((a.rating > b.rating) ? -1 : 0));
         }
         else {
             ispList.sort((b, a) => (b.lowest_price > a.lowest_price) ? 1 : ((a.lowest_price > b.lowest_price) ? -1 : 0));
@@ -57,9 +62,9 @@ class Dashboard extends Component {
             ispList, ispListFilter
         });
     }
-    ispClickHandler(data){
+    ispClickHandler(data) {
         this.setState({
-            selectedISP:data
+            selectedISP: data
         });
     }
     render() {
@@ -67,30 +72,32 @@ class Dashboard extends Component {
             <React.Fragment>
                 {
                     this.state.ispListFilter.length > 0 ?
-                            <div className="dashboard">
-                                <div className="isp-list-sort">
-                                    <div class="isp-list">
-                                        {
-                                            this.state.ispListFilter.map(data =>
-                                                <div key={data.name} onClick={()=>{this.ispClickHandler(data)}} className="isp-name-price">
+                        <div className="dashboard">
+                            <div className="isp-list-sort">
+                                <div className="isp-list">
+                                    {
+                                        this.state.ispListFilter.map(data =>
+                                            <div className="list" key={data.name}>
+                                                <div onClick={() => { this.ispClickHandler(data) }} className="isp-name-price">
                                                     <div>{data.name}</div>
                                                     <div>{data.lowest_price}</div>
                                                 </div>
-                                            )
-                                        }
-                                    </div>
-                                    <div className="isp-sort"> SortBy
-                                       <select onChange={(event) => this.sortData(event.target.value)}>
-                                            <option value="rating" selected>rating</option>
-                                            <option value="price">price</option>
-                                        </select>
-                                    </div>
+                                            </div>
+                                        )
+                                    }
                                 </div>
-                                <div className="isp-details">
-                                    <ISPDetails data={this.state.selectedISP}/>
+                                <div className="isp-sort"> SortBy
+                                       <select onChange={(event) => this.sortData(event.target.value)}>
+                                        <option value="rating">rating</option>
+                                        <option value="price">price</option>
+                                    </select>
                                 </div>
                             </div>
-                        : <div>{this.state.error!=="" || "LOADING..."} </div>
+                            <div className="isp-details">
+                                <ISPDetails data={this.state.selectedISP} />
+                            </div>
+                        </div>
+                        : <div>{this.state.error !== "" || "LOADING..."} </div>
                 }
             </React.Fragment >
         );

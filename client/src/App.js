@@ -9,7 +9,7 @@ function App(props) {
   const inputHandler = (searchValue) => {
     dashboardRef.current.inputHandler(searchValue);
   }
-  const setISPData = (data) => {
+  const setIspDetails = (data) => {
     setIspList(data);
   }
   return (
@@ -17,7 +17,7 @@ function App(props) {
       <Header totalISP={ispList.length} />
       <Searchbox searchInputHandler={(event) => inputHandler(event)} ispList={ispList} />
       <div className="dashboardClass">
-        <Dashboard ref={dashboardRef} setISPData={setISPData} />
+        <Dashboard ref={dashboardRef} setIspDetails={setIspDetails} />
       </div>
     </div>
   );

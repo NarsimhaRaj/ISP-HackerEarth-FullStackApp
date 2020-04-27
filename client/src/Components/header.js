@@ -9,9 +9,9 @@ function Header(props) {
     [storage]);
 
     return (
-        <div>
+        <div className="header">
             <div className="title">ISP HackerEarth - searching ISP made easy</div>
-            <div>
+            <div className="total-isp">
                 Total ISP : {props.totalISP} | API Hits : {storage}
             </div>
         </div>
